@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e2d3;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #e6e2d3;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c7c4b8;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input {
+            padding-left: 35px !important;
+        }
+        .supervisor-list-header {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .supervisor-card {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+        }
+        .supervisor-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        .supervisor-info {
+            flex: 1;
+        }
+        .supervisor-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .supervisor-expertise {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .field-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+        .field-value {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .view-profile-btn {
+            padding: 5px 10px;
+            background-color: #b8b19f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            align-self: flex-end;
+        }
+        .view-profile-btn:hover {
+            background-color: #a09c8b;
+        }
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .chart {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: calc(50% - 10px);
+            box-sizing: border-box;
+        }
+        .chart:first-child {
+            margin-right: 20px;
+        }
+        .chart-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .pie-chart {
+            width: 100%;
+            height: 200px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .line-chart {
+            width: 100%;
+            height: 200px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #b8b19f;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .supervisor-list tr td:first-child {
+            width: 30px;
+        }
+        .abstract {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
+        <div class="nav-links">
+            <a href="homepage.html">Home</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <div id="searchResults">
+            <div class="supervisor-list-header">
+                <ul>
+                    <li>
+                        <a href='supervisor_list.html'>Supervisor List</a>
+                    </li>
+                    <li>
+                        <a href='past_fyp.html'>Past Fyp Titles</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
+                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
+                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
+                </div>
+                <button class="view-profile-btn" onclick="showCharts()">View Profile</button>
+            </div>
+
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">DR SUSAN SMITH (EXPERT)</div>
+                    <div class="supervisor-expertise">Machine Learning, Text Processing</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
+                    <div class="field-value">• CHATBOT X</div>
+                </div>
+                <button class="view-profile-btn" onclick="window.location.href='supervisor_profile.html'">View Profile</button>
+            </div>
+        </div>
+
+        <div id="chartsView" style="display: none;">
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
+                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
+                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
+                </div>
+                <button class="view-profile-btn" onclick="hideCharts()">Hide Charts</button>
+            </div>
+
+            <div>Supervisors with the same area of expertise:</div>
+
+            <div class="charts-container">
+                <div class="chart">
+                    <div class="chart-title">Area of expertise</div>
+                    <div class="pie-chart">
+                        <img src="/api/placeholder/300/200" alt="Pie Chart" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+                <div class="chart">
+                    <div class="chart-title">Number of student supervised</div>
+                    <div class="line-chart">
+                        <img src="/api/placeholder/300/200" alt="Line Chart" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="supervisorListView" style="display: none;">
+            <h2>List of Supervisor</h2>
+            <table class="supervisor-list">
+                <thead>
+                    <tr>
+                        <th>Supervisor Name</th>
+                        <th>Area of Expertise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>1. SMITH GAFFIAN BIN SOLIAMAN (DR)</td>
+                        <td>SOFTWARE ENGINEERING</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>2. MUHAMMAD IZAD RAMLI (DR)</td>
+                        <td>IMAGE & SPEECH PROCESSING</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>3. MUHAMMAD HANA KHAN (DR)</td>
+                        <td>MEDICAL IMAGING</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>4. NABSIAH KY OMAR (ASSOC. PROF. DR)</td>
+                        <td>DATA VISUALIZATION, TEXT ANALYTICS</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>5. NORZIAH BINTI SURYAN (ASSOC. PROF. DR)</td>
+                        <td>SPEECH PROCESSING, INFORMATION RETRIEVAL</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>6. NORDIANGILANG BINTI KABARUDDIN (ASSOC. PROF. DR)</td>
+                        <td>COMPUTATIONAL INTELLIGENCE, EMOTION RECOGNITION</td>
+                    </tr>
+                    <tr onclick="window.location.href='supervisor_profile.html'">
+                        <td>7. PRASANNA A/P KANANATHAN (DR)</td>
+                        <td>LEARNING ANALYTICS, MULTIMEDIA EDUCATION</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pastFYPView" style="display: none;">
+            <h2>Past FYP Titles</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Author</th>
+                        <th>Title</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr onclick="showAbstract()">
+                        <td>1. NURUL YUSOF HAZINA</td>
+                        <td>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</td>
+                    </tr>
+                    <tr>
+                        <td>2. NADIA IBRAHIM</td>
+                        <td>3D SCAN TUMOR IMAGE RECOGNITION USING CANN</td>
+                    </tr>
+                    <tr>
+                        <td>3. JAMALUL AKBAR KEVIN</td>
+                        <td>SPECIES RECOMMENDATION SYSTEM USING IMAGE RECOGNITION</td>
+                    </tr>
+                    <tr>
+                        <td>4. THARIP ABDULLAH</td>
+                        <td>PLANT DISEASE DIAGNOSIS ASSISTANT</td>
+                    </tr>
+                    <tr>
+                        <td>5. NURUL RUBAIYAH RIDZUAN</td>
+                        <td>DISABILITY TREATMENT CENTER MANAGEMENT SYSTEM</td>
+                    </tr>
+                    <tr>
+                        <td>6. JENNIFER COOPER</td>
+                        <td>ELECTRIC VEHICLE CHARGING STATION MANAGEMENT</td>
+                    </tr>
+                    <tr>
+                        <td>7. NABILAH HASMADY</td>
+                        <td>IMAGE RECOGNITION IN SKIN DISEASES</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="abstractView" style="display: none;">
+            <h2>Past FYP Titles</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Author</th>
+                        <th>Title</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. ERWIN HUDA ZULKEFLEEZ</td>
+                        <td>RELATED BUDGET 2024 DIAGRAM USING FACILE PACKING TECHNIQUE</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="abstract">
+                <strong>Abstract:</strong><br><br>
+                The project aims to achieve the issue of challenging presentation of Malaysia's budget data by proposing the packing diagram of budget visualization for better understanding spending distributions in the Malaysian Government's annual planning project. The present method involves a proper pack of effective budget data visualization that would serve to enhance the understandability of the system, thereby allowing impact of data visualization and to establish relationship between Government and public when showing impact of data in specific events. The project is designed to tackle multiple issues in the system, that would include data visualization, structure, functions and overall efficiency. The goal is to create a simple user interface that effectively displays structured data representations. The project is going to review and analyze different visualization studies, taking into consideration the Malaysia budget 2024 facile worksheet and diagram in a more diverse flow.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                if (query.includes('supervisor') || query === '') {
+                    window.location.href = 'supervisor_list.html';
+                } else if (query.includes('fyp') || query.includes('titles')) {
+                    window.location.href = 'past_fyp.html';
+                } else {
+                    // Show normal search results
+                    document.getElementById('searchResults').style.display = 'block';
+                    document.getElementById('chartsView').style.display = 'none';
+                    document.getElementById('supervisorListView').style.display = 'none';
+                    document.getElementById('pastFYPView').style.display = 'none';
+                    document.getElementById('abstractView').style.display = 'none';
+                }
+            }
+        });
+
+        function showCharts() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('chartsView').style.display = 'block';
+            document.getElementById('supervisorListView').style.display = 'none';
+            document.getElementById('pastFYPView').style.display = 'none';
+            document.getElementById('abstractView').style.display = 'none';
+        }
+
+        function hideCharts() {
+            document.getElementById('searchResults').style.display = 'block';
+            document.getElementById('chartsView').style.display = 'none';
+        }
+
+        function showSupervisorList() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('chartsView').style.display = 'none';
+            document.getElementById('supervisorListView').style.display = 'block';
+            document.getElementById('pastFYPView').style.display = 'none';
+            document.getElementById('abstractView').style.display = 'none';
+        }
+
+        function showPastFYP() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('chartsView').style.display = 'none';
+            document.getElementById('supervisorListView').style.display = 'none';
+            document.getElementById('pastFYPView').style.display = 'block';
+            document.getElementById('abstractView').style.display = 'none';
+        }
+
+        function showAbstract() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('chartsView').style.display = 'none';
+            document.getElementById('supervisorListView').style.display = 'none';
+            document.getElementById('pastFYPView').style.display = 'none';
+            document.getElementById('abstractView').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

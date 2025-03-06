@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Profile - Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e2d3;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #e6e2d3;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c7c4b8;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .profile-header {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 4px;
+            margin-right: 20px;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .profile-title {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .contact-info {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .expertise-item {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .fyp-item {
+            margin-bottom: 15px;
+        }
+        .fyp-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .fyp-description {
+            font-size: 14px;
+            color: #666;
+        }
+        .publication-item {
+            margin-bottom: 15px;
+        }
+        .publication-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .publication-authors {
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+        .publication-journal {
+            font-size: 14px;
+            color: #666;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input {
+            padding-left: 35px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
+        <div class="nav-links">
+            <a href="homepage.html">Home</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <div class="profile-header">
+            <img src="/api/placeholder/120/120" alt="Supervisor" class="profile-image">
+            <div class="profile-info">
+                <div class="profile-name">DR SUSAN SMITH (EXPERT)</div>
+                <div class="profile-title">Associate Professor of Computer Science</div>
+                <div class="contact-info">Email: susan.smith@university.edu</div>
+                <div class="contact-info">Phone: +123-456-7890</div>
+                <div class="contact-info">Office: CS Building, Room 304</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Areas of Expertise</div>
+            <div class="expertise-item">Machine Learning</div>
+            <div class="expertise-item">Text Processing</div>
+            <div class="expertise-item">Natural Language Processing</div>
+            <div class="expertise-item">Artificial Intelligence</div>
+            <div class="expertise-item">Data Mining</div>
+            <div class="expertise-item">Computer Vision</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Past FYP Projects Supervised</div>
+            <div class="fyp-item">
+                <div class="fyp-title">FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
+                <div class="fyp-description">A comprehensive mobile application designed to streamline FYP management, including project submission, progress tracking, and feedback mechanisms.</div>
+            </div>
+            <div class="fyp-item">
+                <div class="fyp-title">CHATBOT X</div>
+                <div class="fyp-description">An intelligent chatbot system leveraging NLP and machine learning to provide academic guidance and support to students.</div>
+            </div>
+            <div class="fyp-item">
+                <div class="fyp-title">SENTIMENT ANALYSIS FOR LOCAL PRODUCT REVIEWS</div>
+                <div class="fyp-description">A tool that analyzes customer reviews to extract sentiment and provide insights for local businesses.</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Recent Publications</div>
+            <div class="publication-item">
+                <div class="publication-title">Improving Text Classification Using Hybrid Neural Networks</div>
+                <div class="publication-authors">Smith, S., Wang, L., & Johnson, K.</div>
+                <div class="publication-journal">Journal of Artificial Intelligence Research, 2023</div>
+            </div>
+            <div class="publication-item">
+                <div class="publication-title">A Novel Approach to Sentiment Analysis in Multilingual Contexts</div>
+                <div class="publication-authors">Smith, S., & Davies, M.</div>
+                <div class="publication-journal">International Conference on Natural Language Processing, 2022</div>
+            </div>
+            <div class="publication-item">
+                <div class="publication-title">Transfer Learning for Low-Resource Language Processing</div>
+                <div class="publication-authors">Kumar, R., Smith, S., & Chen, Y.</div>
+                <div class="publication-journal">IEEE Transactions on Knowledge and Data Engineering, 2021</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                if (query.includes('supervisor') || query === '') {
+                    window.location.href = 'supervisor_list.html';
+                } else if (query.includes('fyp') || query.includes('titles')) {
+                    window.location.href = 'past_fyp.html';
+                } else if (query.includes('artificial') || query.includes('intelligence')) {
+                    window.location.href = 'search_results.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

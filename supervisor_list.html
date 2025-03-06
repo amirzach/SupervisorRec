@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor List - Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e2d3;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #e6e2d3;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c7c4b8;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #b8b19f;
+            color: black;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input {
+            padding-left: 35px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
+        <div class="nav-links">
+            <a href="homepage.html">Home</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <h2>List of Supervisor</h2>
+        <table class="supervisor-list">
+            <thead>
+                <tr>
+                    <th>Supervisor Name</th>
+                    <th>Area of Expertise</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>1. SMITH GAFFIAN BIN SOLIAMAN (DR)</td>
+                    <td>SOFTWARE ENGINEERING</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>2. MUHAMMAD IZAD RAMLI (DR)</td>
+                    <td>IMAGE & SPEECH PROCESSING</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>3. MUHAMMAD HANA KHAN (DR)</td>
+                    <td>MEDICAL IMAGING</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>4. NABSIAH KY OMAR (ASSOC. PROF. DR)</td>
+                    <td>DATA VISUALIZATION, TEXT ANALYTICS</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>5. NORZIAH BINTI SURYAN (ASSOC. PROF. DR)</td>
+                    <td>SPEECH PROCESSING, INFORMATION RETRIEVAL</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>6. NORDIANGILANG BINTI KABARUDDIN (ASSOC. PROF. DR)</td>
+                    <td>COMPUTATIONAL INTELLIGENCE, EMOTION RECOGNITION</td>
+                </tr>
+                <tr onclick="window.location.href='supervisor_profile.html'">
+                    <td>7. PRASANNA A/P KANANATHAN (DR)</td>
+                    <td>LEARNING ANALYTICS, MULTIMEDIA EDUCATION</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                if (query.includes('fyp') || query.includes('titles')) {
+                    window.location.href = 'past_fyp.html';
+                } else if (query.includes('artificial') || query.includes('intelligence')) {
+                    window.location.href = 'search_results.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

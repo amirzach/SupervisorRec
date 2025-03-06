@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e2d3;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #e6e2d3;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c7c4b8;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input {
+            padding-left: 35px !important;
+        }
+        .supervisor-card {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+        }
+        .supervisor-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        .supervisor-info {
+            flex: 1;
+        }
+        .supervisor-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .supervisor-expertise {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .field-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 3px;
+        }
+        .field-value {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .view-profile-btn {
+            padding: 5px 10px;
+            background-color: #b8b19f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            align-self: flex-end;
+        }
+        .view-profile-btn:hover {
+            background-color: #a09c8b;
+        }
+        .charts-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .chart {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: calc(50% - 10px);
+            box-sizing: border-box;
+        }
+        .chart:first-child {
+            margin-right: 20px;
+        }
+        .chart-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .pie-chart, .line-chart {
+            width: 100%;
+            height: 200px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
+        <div class="nav-links">
+            <a href="homepage.html">Home</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" value="Artificial Intelligence" id="searchInput">
+        </div>
+
+        <div id="searchResults">
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
+                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
+                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
+                </div>
+                <button class="view-profile-btn" onclick="showCharts()">View Profile</button>
+            </div>
+
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">DR SUSAN SMITH (EXPERT)</div>
+                    <div class="supervisor-expertise">Machine Learning, Text Processing</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
+                    <div class="field-value">• CHATBOT X</div>
+                </div>
+                <button class="view-profile-btn" onclick="window.location.href='supervisor_profile.html'">View Profile</button>
+            </div>
+        </div>
+
+        <div id="chartsView" style="display: none;">
+            <div class="supervisor-card">
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
+                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
+                    <div class="field-title">Field FYP Titles:</div>
+                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
+                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
+                </div>
+                <button class="view-profile-btn" onclick="hideCharts()">Hide Charts</button>
+            </div>
+
+            <div>Supervisors with the same area of expertise:</div>
+
+            <div class="charts-container">
+                <div class="chart">
+                    <div class="chart-title">Area of expertise</div>
+                    <div class="pie-chart">
+                        <img src="/api/placeholder/300/200" alt="Pie Chart" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+                <div class="chart">
+                    <div class="chart-title">Number of student supervised</div>
+                    <div class="line-chart">
+                        <img src="/api/placeholder/300/200" alt="Line Chart" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCharts() {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('chartsView').style.display = 'block';
+        }
+
+        function hideCharts() {
+            document.getElementById('searchResults').style.display = 'block';
+            document.getElementById('chartsView').style.display = 'none';
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                if (query.includes('supervisor') || query === '') {
+                    window.location.href = 'supervisor_list.html';
+                } else if (query.includes('fyp') || query.includes('titles')) {
+                    window.location.href = 'past_fyp.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

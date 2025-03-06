@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past FYP Titles - Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e2d3;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #e6e2d3;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #c7c4b8;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .nav-links {
+            display: flex;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #b8b19f;
+            color: black;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+        .abstract {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .search-input {
+            padding-left: 35px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
+        <div class="nav-links">
+            <a href="homepage.html">Home</a>
+            <a href="profiles.html">Profiles</a>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <h2>Past FYP Titles</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Author</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="toggleAbstract()">
+                    <td>1. NURUL YUSOF HAZINA</td>
+                    <td>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</td>
+                </tr>
+                <tr>
+                    <td>2. NADIA IBRAHIM</td>
+                    <td>3D SCAN TUMOR IMAGE RECOGNITION USING CANN</td>
+                </tr>
+                <tr>
+                    <td>3. JAMALUL AKBAR KEVIN</td>
+                    <td>SPECIES RECOMMENDATION SYSTEM USING IMAGE RECOGNITION</td>
+                </tr>
+                <tr>
+                    <td>4. THARIP ABDULLAH</td>
+                    <td>PLANT DISEASE DIAGNOSIS ASSISTANT</td>
+                </tr>
+                <tr>
+                    <td>5. NURUL RUBAIYAH RIDZUAN</td>
+                    <td>DISABILITY TREATMENT CENTER MANAGEMENT SYSTEM</td>
+                </tr>
+                <tr>
+                    <td>6. JENNIFER COOPER</td>
+                    <td>ELECTRIC VEHICLE CHARGING STATION MANAGEMENT</td>
+                </tr>
+                <tr>
+                    <td>7. NABILAH HASMADY</td>
+                    <td>IMAGE RECOGNITION IN SKIN DISEASES</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div id="abstractSection" class="abstract">
+            <h3>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</h3>
+            <p><strong>Author:</strong> NURUL YUSOF HAZINA</p>
+            <p><strong>Abstract:</strong></p>
+            <p>This project focuses on developing a smart inventory management system with integrated visualization capabilities. The system leverages infrared (IR) technology to track inventory levels in real-time, enabling businesses to monitor stock levels efficiently. The visualization component provides intuitive graphical representations of inventory data, helping management make informed decisions about restocking, identifying slow-moving items, and optimizing warehouse space. The system includes features such as automated alerts for low stock, predictive analytics for demand forecasting, and customizable reporting tools. Implementation results show significant improvements in inventory accuracy and reduced operational costs for the test organizations.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleAbstract() {
+            const abstract = document.getElementById('abstractSection');
+            if (abstract.style.display === 'none' || abstract.style.display === '') {
+                abstract.style.display = 'block';
+            } else {
+                abstract.style.display = 'none';
+            }
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.toLowerCase();
+                if (query.includes('supervisor') || query === '') {
+                    window.location.href = 'supervisor_list.html';
+                } else if (query.includes('artificial') || query.includes('intelligence')) {
+                    window.location.href = 'search_results.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
