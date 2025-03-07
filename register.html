@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,22 +33,30 @@
             display: block;
             margin-bottom: 5px;
         }
-        .form-group input {
+        .input-container {
+            position: relative;
+        }
+        .input-container input {
             width: 100%;
-            padding: 8px;
+            padding: 8px 30px 8px 30px;
             box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .password-container {
-            position: relative;
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
         }
-        .password-container .eye-icon {
+        .password-toggle {
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
+            color: #555;
         }
         .btn {
             width: 100%;
@@ -71,52 +80,83 @@
             color: #333;
             text-decoration: underline;
         }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="register-container">
         <h2>Register</h2>
-        <form action="homepage.html">
+        <form action="/register" method="POST" id="registerForm">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" required>
+                <div class="input-container">
+                    <i class="input-icon fas fa-user"></i>
+                    <input type="text" id="username" name="username" required>
+                </div>
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" required>
+                <div class="input-container">
+                    <i class="input-icon fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" required>
+                </div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <div class="password-container">
-                    <input type="password" id="password" required>
-                    <span class="eye-icon">👁️</span>
+                <div class="input-container">
+                    <i class="input-icon fas fa-lock"></i>
+                    <input type="password" id="password" name="password" required>
+                    <i class="password-toggle fas fa-eye-slash"></i>
                 </div>
             </div>
             <div class="form-group">
                 <label for="confirm-password">Confirm Password</label>
-                <div class="password-container">
+                <div class="input-container">
+                    <i class="input-icon fas fa-lock"></i>
                     <input type="password" id="confirm-password" required>
-                    <span class="eye-icon">👁️</span>
+                    <i class="password-toggle fas fa-eye-slash"></i>
                 </div>
             </div>
             <button type="submit" class="btn">Sign Up</button>
             <div class="login-link">
-                Already have an account? <a href="index.html">Sign in</a>
+                Already have an account? <a href="/">Sign in</a>
             </div>
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
         </form>
     </div>
 
     <script>
-        const eyeIcons = document.querySelectorAll('.eye-icon');
-        eyeIcons.forEach(icon => {
-            icon.addEventListener('click', function() {
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
                 const passwordInput = this.previousElementSibling;
                 if (passwordInput.type === 'password') {
                     passwordInput.type = 'text';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
                 } else {
                     passwordInput.type = 'password';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
                 }
             });
+        });
+
+        // Password confirmation validation
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                alert('Passwords do not match!');
+            }
         });
     </script>
 </body>
