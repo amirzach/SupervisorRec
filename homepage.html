@@ -177,6 +177,28 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .similarity-score {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .key-terms {
+            font-size: 12px;
+            color: #555;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -192,7 +214,15 @@
     <div class="container">
         <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+            <input type="text" class="search-input" placeholder="Enter research topic or interest (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <div id="loadingIndicator" class="loading">
+            Searching for matching supervisors...
+        </div>
+
+        <div id="noResults" class="no-results">
+            No supervisors found matching your search criteria.
         </div>
 
         <div id="searchResults">
@@ -207,42 +237,14 @@
                 </ul>
             </div>
 
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
-                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
-                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
-                </div>
-                <button class="view-profile-btn" onclick="showCharts()">View Profile</button>
-            </div>
-
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">DR SUSAN SMITH (EXPERT)</div>
-                    <div class="supervisor-expertise">Machine Learning, Text Processing</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
-                    <div class="field-value">• CHATBOT X</div>
-                </div>
-                <button class="view-profile-btn" onclick="window.location.href='supervisor_profile.html'">View Profile</button>
+            <div id="supervisorCardContainer">
+                <!-- Supervisor cards will be dynamically inserted here -->
             </div>
         </div>
 
         <div id="chartsView" style="display: none;">
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
-                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
-                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
-                </div>
-                <button class="view-profile-btn" onclick="hideCharts()">Hide Charts</button>
+            <div id="selectedSupervisorProfile" class="supervisor-card">
+                <!-- Selected supervisor details -->
             </div>
 
             <div>Supervisors with the same area of expertise:</div>
@@ -373,21 +375,128 @@
 
     <script>
         const searchInput = document.getElementById('searchInput');
+        const supervisorCardContainer = document.getElementById('supervisorCardContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const noResults = document.getElementById('noResults');
         
+        // Function to create a supervisor card element
+        function createSupervisorCard(supervisor) {
+            const card = document.createElement('div');
+            card.className = 'supervisor-card';
+            
+            // Calculate similarity percentage for display
+            const similarityPercentage = (supervisor.similarity * 100).toFixed(1);
+            
+            card.innerHTML = `
+                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                <div class="supervisor-info">
+                    <div class="supervisor-name">${supervisor.supervisor_name}</div>
+                    <div class="supervisor-expertise">${supervisor.expertise}</div>
+                    <div class="similarity-score">Match: ${similarityPercentage}%</div>
+                    <div class="key-terms">Key terms: ${supervisor.key_terms}</div>
+                </div>
+                <button class="view-profile-btn" onclick="viewSupervisorProfile(${supervisor.supervisor_id})">View Full Profile</button>
+            `;
+            
+            return card;
+        }
+        
+        // Function to view a specific supervisor's profile
+        function viewSupervisorProfile(supervisorId) {
+            // Fetch supervisor details from the API
+            fetch(`/api/supervisor/${supervisorId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch supervisor details');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('searchResults').style.display = 'none';
+                    
+                    // Populate the selected supervisor profile
+                    const profileContainer = document.getElementById('selectedSupervisorProfile');
+                    profileContainer.innerHTML = `
+                        <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
+                        <div class="supervisor-info">
+                            <div class="supervisor-name">${data.SvName}</div>
+                            <div class="supervisor-expertise">${data.expertise_areas}</div>
+                            <div class="field-title">Email:</div>
+                            <div class="field-value">${data.SvEmail}</div>
+                        </div>
+                        <button class="view-profile-btn" onclick="hideCharts()">Back to Results</button>
+                    `;
+                    
+                    document.getElementById('chartsView').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching supervisor profile:', error);
+                    alert('Failed to load supervisor profile. Please try again.');
+                });
+        }
+        
+        // Function to search for supervisors using the API
+        function searchSupervisors(query) {
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            supervisorCardContainer.innerHTML = '';
+            noResults.style.display = 'none';
+            
+            // Make API request
+            fetch(`/api/search_supervisors?query=${encodeURIComponent(query)}&min_score=0.1&top_n=10`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Search failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Check if results were found
+                    if (data.results && data.results.length > 0) {
+                        // Create and append supervisor cards
+                        data.results.forEach(supervisor => {
+                            const card = createSupervisorCard(supervisor);
+                            supervisorCardContainer.appendChild(card);
+                        });
+                    } else {
+                        // Show no results message
+                        noResults.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                    loadingIndicator.style.display = 'none';
+                    noResults.style.display = 'block';
+                    noResults.textContent = 'An error occurred while searching. Please try again.';
+                });
+        }
+        
+        // Search input event handler
         searchInput.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                if (query.includes('supervisor') || query === '') {
+                const query = searchInput.value.trim();
+                
+                if (query === '') {
+                    return; // Don't search on empty query
+                }
+                
+                if (query.toLowerCase().includes('supervisor')) {
                     window.location.href = 'supervisor_list.html';
-                } else if (query.includes('fyp') || query.includes('titles')) {
+                } else if (query.toLowerCase().includes('fyp') || query.toLowerCase().includes('titles')) {
                     window.location.href = 'past_fyp.html';
                 } else {
-                    // Show normal search results
+                    // Show search results view
                     document.getElementById('searchResults').style.display = 'block';
                     document.getElementById('chartsView').style.display = 'none';
                     document.getElementById('supervisorListView').style.display = 'none';
                     document.getElementById('pastFYPView').style.display = 'none';
                     document.getElementById('abstractView').style.display = 'none';
+                    
+                    // Perform search
+                    searchSupervisors(query);
                 }
             }
         });

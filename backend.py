@@ -1,7 +1,8 @@
-from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for, session, send_from_directory, jsonify
 import mysql.connector
 import os
 import random
+from AiEngine import get_recommender
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -116,22 +117,10 @@ def login():
         cursor.execute("SELECT * FROM student WHERE StdName = %s", (username,))
         user = cursor.fetchone()
         
-        # Debug print
-        print(f"User: {user}")
-        
-        if user:
-            # Debug print
-            print(f"Checking password for {username}")
-            print(f"Stored password: {user['StdPassword']}")
-            
-            # Direct password comparison
-            password_correct = (user['StdPassword'] == password)
-            print(f"Password correct: {password_correct}")
-            
-            if password_correct:
-                session['username'] = username
-                session['user_id'] = user['StudentID']
-                return redirect(url_for('homepage'))
+        if user and user['StdPassword'] == password:
+            session['username'] = username
+            session['user_id'] = user['StudentID']
+            return redirect(url_for('homepage'))
         
         error_message = "Invalid username or password. Please try again."
         return render_template('index.html', error=error_message)
@@ -154,6 +143,53 @@ def logout():
     session.pop('username', None)
     session.pop('user_id', None)
     return redirect(url_for('index'))
+
+# New route for handling supervisor search
+@app.route('/api/search_supervisors', methods=['GET'])
+def search_supervisors():
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    query = request.args.get('query', '')
+    min_score = float(request.args.get('min_score', 0.1))
+    top_n = int(request.args.get('top_n', 5))
+    
+    try:
+        recommender = get_recommender()
+        results = recommender.search_supervisors(query, min_score, top_n)
+        return jsonify({"results": results})
+    except Exception as e:
+        print(f"Search error: {e}")
+        return jsonify({"error": str(e)}), 500
+
+# Return supervisor details for a specific supervisor
+@app.route('/api/supervisor/<int:supervisor_id>', methods=['GET'])
+def get_supervisor(supervisor_id):
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    conn, cursor = get_db_connection()
+    try:
+        # Get supervisor details
+        cursor.execute("""
+            SELECT s.SupervisorID, s.SvName, s.SvEmail, GROUP_CONCAT(e.Expertise SEPARATOR ', ') as expertise_areas
+            FROM supervisor s
+            LEFT JOIN expertise e ON s.SupervisorID = e.SupervisorID
+            WHERE s.SupervisorID = %s
+            GROUP BY s.SupervisorID
+        """, (supervisor_id,))
+        
+        supervisor = cursor.fetchone()
+        if not supervisor:
+            return jsonify({"error": "Supervisor not found"}), 404
+            
+        return jsonify(supervisor)
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
