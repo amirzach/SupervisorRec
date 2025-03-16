@@ -144,6 +144,36 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
 
+@app.route('/api/supervisors', methods=['GET'])
+def get_all_supervisors():
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    conn, cursor = get_db_connection()
+    try:
+        cursor.execute("""
+            SELECT s.SupervisorID, s.SvName, GROUP_CONCAT(e.Expertise SEPARATOR ', ') as expertise_areas
+            FROM supervisor s
+            LEFT JOIN expertise e ON s.SupervisorID = e.SupervisorID
+            GROUP BY s.SupervisorID
+            ORDER BY s.SvName
+        """)
+        
+        supervisors = cursor.fetchall()
+        return jsonify({"supervisors": supervisors})
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+        
+@app.route('/supervisor_list.html')
+def supervisor_list():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('supervisor_list.html')
+
 # New route for handling supervisor search
 @app.route('/api/search_supervisors', methods=['GET'])
 def search_supervisors():
