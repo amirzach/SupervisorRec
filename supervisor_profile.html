@@ -133,7 +133,45 @@
         .search-input {
             padding-left: 35px !important;
         }
+        .expertise-chart {
+            width: 100%;
+            height: 250px;
+            margin-top: 20px;
+        }
+        .similar-supervisors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .similar-item {
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            padding: 10px;
+            width: calc(50% - 10px);
+            box-sizing: border-box;
+        }
+        .similar-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .similar-expertise {
+            font-size: 12px;
+            color: #666;
+        }
+        .similarity-score {
+            font-size: 12px;
+            color: #007bff;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -151,78 +189,203 @@
             <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
         </div>
 
-        <div class="profile-header">
-            <img src="/api/placeholder/120/120" alt="Supervisor" class="profile-image">
-            <div class="profile-info">
-                <div class="profile-name">DR SUSAN SMITH (EXPERT)</div>
-                <div class="profile-title">Associate Professor of Computer Science</div>
-                <div class="contact-info">Email: susan.smith@university.edu</div>
-                <div class="contact-info">Phone: +123-456-7890</div>
-                <div class="contact-info">Office: CS Building, Room 304</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Areas of Expertise</div>
-            <div class="expertise-item">Machine Learning</div>
-            <div class="expertise-item">Text Processing</div>
-            <div class="expertise-item">Natural Language Processing</div>
-            <div class="expertise-item">Artificial Intelligence</div>
-            <div class="expertise-item">Data Mining</div>
-            <div class="expertise-item">Computer Vision</div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Past FYP Projects Supervised</div>
-            <div class="fyp-item">
-                <div class="fyp-title">FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
-                <div class="fyp-description">A comprehensive mobile application designed to streamline FYP management, including project submission, progress tracking, and feedback mechanisms.</div>
-            </div>
-            <div class="fyp-item">
-                <div class="fyp-title">CHATBOT X</div>
-                <div class="fyp-description">An intelligent chatbot system leveraging NLP and machine learning to provide academic guidance and support to students.</div>
-            </div>
-            <div class="fyp-item">
-                <div class="fyp-title">SENTIMENT ANALYSIS FOR LOCAL PRODUCT REVIEWS</div>
-                <div class="fyp-description">A tool that analyzes customer reviews to extract sentiment and provide insights for local businesses.</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Recent Publications</div>
-            <div class="publication-item">
-                <div class="publication-title">Improving Text Classification Using Hybrid Neural Networks</div>
-                <div class="publication-authors">Smith, S., Wang, L., & Johnson, K.</div>
-                <div class="publication-journal">Journal of Artificial Intelligence Research, 2023</div>
-            </div>
-            <div class="publication-item">
-                <div class="publication-title">A Novel Approach to Sentiment Analysis in Multilingual Contexts</div>
-                <div class="publication-authors">Smith, S., & Davies, M.</div>
-                <div class="publication-journal">International Conference on Natural Language Processing, 2022</div>
-            </div>
-            <div class="publication-item">
-                <div class="publication-title">Transfer Learning for Low-Resource Language Processing</div>
-                <div class="publication-authors">Kumar, R., Smith, S., & Chen, Y.</div>
-                <div class="publication-journal">IEEE Transactions on Knowledge and Data Engineering, 2021</div>
-            </div>
+        <div id="profileContent">
+            <div class="loading">Loading supervisor profile...</div>
         </div>
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                if (query.includes('supervisor') || query === '') {
-                    window.location.href = 'supervisor_list.html';
-                } else if (query.includes('fyp') || query.includes('titles')) {
-                    window.location.href = 'past_fyp.html';
-                } else if (query.includes('artificial') || query.includes('intelligence')) {
-                    window.location.href = 'search_results.html';
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get supervisor ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const supervisorId = urlParams.get('id');
+            
+            if (!supervisorId) {
+                document.getElementById('profileContent').innerHTML = '<div class="section">No supervisor selected. Please go back to the supervisor list.</div>';
+                return;
             }
+            
+            // Fetch supervisor details
+            fetchSupervisorProfile(supervisorId);
+            
+            // Setup search functionality
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        window.location.href = `search_results.html?query=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
         });
+        
+        async function fetchSupervisorProfile(supervisorId) {
+            try {
+                // Fetch supervisor data
+                const response = await fetch(`/api/supervisor/${supervisorId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch supervisor details');
+                }
+                
+                const supervisor = await response.json();
+                
+                // Once we have the supervisor data, find similar supervisors
+                const similarSupervisors = await fetchSimilarSupervisors(supervisor.expertise_areas);
+                
+                // Render the profile
+                renderProfile(supervisor, similarSupervisors);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('profileContent').innerHTML = `
+                    <div class="section">
+                        <div class="section-title">Error</div>
+                        <p>Failed to load supervisor profile. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function fetchSimilarSupervisors(expertise) {
+            try {
+                const response = await fetch(`/api/search_supervisors?query=${encodeURIComponent(expertise)}&min_score=0.3&top_n=4`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch similar supervisors');
+                }
+                
+                const data = await response.json();
+                return data.results || [];
+            } catch (error) {
+                console.error('Error fetching similar supervisors:', error);
+                return [];
+            }
+        }
+        
+        function renderProfile(supervisor, similarSupervisors) {
+            // Split expertise into array
+            const expertiseAreas = supervisor.expertise_areas ? supervisor.expertise_areas.split(', ') : [];
+            
+            // Create the profile HTML
+            const profileHTML = `
+                <div class="profile-header">
+                    <img src="/api/placeholder/120/120" alt="Supervisor" class="profile-image">
+                    <div class="profile-info">
+                        <div class="profile-name">${supervisor.SvName}</div>
+                        <div class="profile-title">Faculty of Computing</div>
+                        <div class="contact-info">Email: ${supervisor.SvEmail || 'Not available'}</div>
+                        <div class="contact-info">ID: ${supervisor.SupervisorID}</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Areas of Expertise</div>
+                    ${expertiseAreas.map(area => `<div class="expertise-item">${area.trim()}</div>`).join('')}
+                    
+                    <canvas id="expertiseChart" class="expertise-chart"></canvas>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Similar Supervisors</div>
+                    <div class="similar-supervisors" id="similarSupervisors">
+                        ${renderSimilarSupervisors(similarSupervisors, supervisor.SupervisorID)}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Past FYP Projects Supervised</div>
+                    <div class="fyp-item">
+                        <div class="fyp-title">FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
+                        <div class="fyp-description">A comprehensive mobile application designed to streamline FYP management, including project submission, progress tracking, and feedback mechanisms.</div>
+                    </div>
+                    <div class="fyp-item">
+                        <div class="fyp-title">CHATBOT X</div>
+                        <div class="fyp-description">An intelligent chatbot system leveraging NLP and machine learning to provide academic guidance and support to students.</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('profileContent').innerHTML = profileHTML;
+            
+            // Create expertise chart
+            createExpertiseChart(expertiseAreas);
+        }
+        
+        function renderSimilarSupervisors(supervisors, currentId) {
+            if (!supervisors || supervisors.length === 0) {
+                return '<p>No similar supervisors found.</p>';
+            }
+            
+            return supervisors
+                .filter(s => s.supervisor_id != currentId) // Remove current supervisor
+                .slice(0, 4) // Take only top 4
+                .map(supervisor => `
+                    <div class="similar-item">
+                        <div class="similar-name">
+                            <a href="supervisor_profile.html?id=${supervisor.supervisor_id}">${supervisor.supervisor_name}</a>
+                        </div>
+                        <div class="similar-expertise">${supervisor.key_terms}</div>
+                        <div class="similarity-score">Similarity: ${(supervisor.similarity * 100).toFixed(1)}%</div>
+                    </div>
+                `).join('');
+        }
+        
+        function createExpertiseChart(expertiseAreas) {
+            if (!expertiseAreas || expertiseAreas.length === 0) return;
+            
+            const ctx = document.getElementById('expertiseChart').getContext('2d');
+            
+            // Generate colors
+            const backgroundColors = generateColors(expertiseAreas.length);
+            
+            // Create random values for demonstration (in a real app, you'd use actual data)
+            const values = expertiseAreas.map(() => Math.floor(Math.random() * 50) + 50);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: expertiseAreas,
+                    datasets: [{
+                        label: 'Expertise Level',
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Expertise Distribution'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Knowledge Level'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function generateColors(count) {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                const hue = (i * 360 / count) % 360;
+                colors.push(`hsla(${hue}, 70%, 60%, 0.6)`);
+            }
+            return colors;
+        }
     </script>
 </body>
 </html>

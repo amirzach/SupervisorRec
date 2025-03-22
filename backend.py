@@ -167,7 +167,44 @@ def get_all_supervisors():
     finally:
         cursor.close()
         conn.close()
+
+# Add this new route to backend.py
+
+@app.route('/supervisor_profile.html')
+def supervisor_profile():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('supervisor_profile.html')
+
+# Update the existing API route to include more details
+@app.route('/api/supervisor/<int:supervisor_id>', methods=['GET'])
+def get_supervisor(supervisor_id):
+    if 'username' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
         
+    conn, cursor = get_db_connection()
+    try:
+        # Get supervisor details with expertise areas
+        cursor.execute("""
+            SELECT s.SupervisorID, s.SvName, s.SvEmail, GROUP_CONCAT(e.Expertise SEPARATOR ', ') as expertise_areas
+            FROM supervisor s
+            LEFT JOIN expertise e ON s.SupervisorID = e.SupervisorID
+            WHERE s.SupervisorID = %s
+            GROUP BY s.SupervisorID
+        """, (supervisor_id,))
+        
+        supervisor = cursor.fetchone()
+        if not supervisor:
+            return jsonify({"error": "Supervisor not found"}), 404
+            
+        return jsonify(supervisor)
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+       
 @app.route('/supervisor_list.html')
 def supervisor_list():
     if 'username' not in session:
@@ -220,35 +257,6 @@ def search_supervisors():
     except Exception as e:
         print(f"Search error: {e}")
         return jsonify({"error": str(e)}), 500
-
-# Return supervisor details for a specific supervisor
-@app.route('/api/supervisor/<int:supervisor_id>', methods=['GET'])
-def get_supervisor(supervisor_id):
-    if 'username' not in session:
-        return jsonify({"error": "Unauthorized"}), 401
-        
-    conn, cursor = get_db_connection()
-    try:
-        # Get supervisor details
-        cursor.execute("""
-            SELECT s.SupervisorID, s.SvName, s.SvEmail, GROUP_CONCAT(e.Expertise SEPARATOR ', ') as expertise_areas
-            FROM supervisor s
-            LEFT JOIN expertise e ON s.SupervisorID = e.SupervisorID
-            WHERE s.SupervisorID = %s
-            GROUP BY s.SupervisorID
-        """, (supervisor_id,))
-        
-        supervisor = cursor.fetchone()
-        if not supervisor:
-            return jsonify({"error": "Supervisor not found"}), 404
-            
-        return jsonify(supervisor)
-    except mysql.connector.Error as err:
-        print(f"Database error: {err}")
-        return jsonify({"error": str(err)}), 500
-    finally:
-        cursor.close()
-        conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

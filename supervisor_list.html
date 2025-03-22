@@ -176,7 +176,7 @@
                 supervisors.forEach((supervisor, index) => {
                     const row = document.createElement('tr');
                     row.onclick = function() {
-                        window.location.href = `supervisor_profile.html?id=${supervisor.SupervisorID}`;
+                        window.location.href = `/supervisor_profile.html?id=${supervisor.SupervisorID}`;
                     };
                     
                     row.innerHTML = `
