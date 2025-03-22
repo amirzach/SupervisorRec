@@ -177,15 +177,29 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .search-results {
+            margin-top: 20px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
         <div class="nav-links">
-            <a href="homepage.html">Home</a>
-            <a href="profiles.html">Profiles</a>
-            <a href="index.html">Logout</a>
+            <a href="/homepage">Home</a>
+            <a href="/profiles.html">Profiles</a>
+            <a href="/logout">Logout</a>
         </div>
     </div>
 
@@ -195,46 +209,15 @@
             <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
         </div>
 
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
-                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
-                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
-                </div>
-                <button class="view-profile-btn" onclick="showCharts()">View Profile</button>
-            </div>
-
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">DR SUSAN SMITH (EXPERT)</div>
-                    <div class="supervisor-expertise">Machine Learning, Text Processing</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• FYP STUDENT SYSTEM FOR MOBILE APPLICATION</div>
-                    <div class="field-value">• CHATBOT X</div>
-                </div>
-                <button class="view-profile-btn" onclick="window.location.href='supervisor_profile.html'">View Profile</button>
+        <div id="searchResults">
+            <div id="supervisorsList" class="supervisor-list-container">
+                <div class="loading">Loading supervisors...</div>
             </div>
         </div>
 
-        <div id="chartsView" style="display: none;">
-            <div class="supervisor-card">
-                <img src="/api/placeholder/60/60" alt="Supervisor" class="supervisor-image">
-                <div class="supervisor-info">
-                    <div class="supervisor-name">PROFESSOR MARIA DR SOMEPROF (SR) (HEAD ROLE)</div>
-                    <div class="supervisor-expertise">Head of Department, Software Engineering, Artificial Intelligence</div>
-                    <div class="field-title">Field FYP Titles:</div>
-                    <div class="field-value">• STUDENT PROJECT MANAGEMENT SYSTEM FOR UKBA</div>
-                    <div class="field-value">• SIMMERSAL PALM PLANTING SYSTEM</div>
-                </div>
-                <button class="view-profile-btn" onclick="hideCharts()">Hide Charts</button>
-            </div>
-
-            <div>Supervisors with the same area of expertise:</div>
-
+        <div id="supervisorDetailView" style="display: none;">
+            <div id="supervisorDetail"></div>
+            
             <div class="charts-container">
                 <div class="chart">
                     <div class="chart-title">Area of expertise</div>
@@ -243,178 +226,229 @@
                     </div>
                 </div>
                 <div class="chart">
-                    <div class="chart-title">Number of student supervised</div>
+                    <div class="chart-title">Number of students supervised</div>
                     <div class="line-chart">
                         <img src="/api/placeholder/300/200" alt="Line Chart" style="max-width: 100%; max-height: 100%;">
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div id="supervisorListView" style="display: none;">
-            <h2>List of Supervisor</h2>
-            <table class="supervisor-list">
-                <thead>
-                    <tr>
-                        <th>Supervisor Name</th>
-                        <th>Area of Expertise</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>1. SMITH GAFFIAN BIN SOLIAMAN (DR)</td>
-                        <td>SOFTWARE ENGINEERING</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>2. MUHAMMAD IZAD RAMLI (DR)</td>
-                        <td>IMAGE & SPEECH PROCESSING</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>3. MUHAMMAD HANA KHAN (DR)</td>
-                        <td>MEDICAL IMAGING</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>4. NABSIAH KY OMAR (ASSOC. PROF. DR)</td>
-                        <td>DATA VISUALIZATION, TEXT ANALYTICS</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>5. NORZIAH BINTI SURYAN (ASSOC. PROF. DR)</td>
-                        <td>SPEECH PROCESSING, INFORMATION RETRIEVAL</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>6. NORDIANGILANG BINTI KABARUDDIN (ASSOC. PROF. DR)</td>
-                        <td>COMPUTATIONAL INTELLIGENCE, EMOTION RECOGNITION</td>
-                    </tr>
-                    <tr onclick="window.location.href='supervisor_profile.html'">
-                        <td>7. PRASANNA A/P KANANATHAN (DR)</td>
-                        <td>LEARNING ANALYTICS, MULTIMEDIA EDUCATION</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="pastFYPView" style="display: none;">
-            <h2>Past FYP Titles</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Author</th>
-                        <th>Title</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr onclick="showAbstract()">
-                        <td>1. NURUL YUSOF HAZINA</td>
-                        <td>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</td>
-                    </tr>
-                    <tr>
-                        <td>2. NADIA IBRAHIM</td>
-                        <td>3D SCAN TUMOR IMAGE RECOGNITION USING CANN</td>
-                    </tr>
-                    <tr>
-                        <td>3. JAMALUL AKBAR KEVIN</td>
-                        <td>SPECIES RECOMMENDATION SYSTEM USING IMAGE RECOGNITION</td>
-                    </tr>
-                    <tr>
-                        <td>4. THARIP ABDULLAH</td>
-                        <td>PLANT DISEASE DIAGNOSIS ASSISTANT</td>
-                    </tr>
-                    <tr>
-                        <td>5. NURUL RUBAIYAH RIDZUAN</td>
-                        <td>DISABILITY TREATMENT CENTER MANAGEMENT SYSTEM</td>
-                    </tr>
-                    <tr>
-                        <td>6. JENNIFER COOPER</td>
-                        <td>ELECTRIC VEHICLE CHARGING STATION MANAGEMENT</td>
-                    </tr>
-                    <tr>
-                        <td>7. NABILAH HASMADY</td>
-                        <td>IMAGE RECOGNITION IN SKIN DISEASES</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div id="abstractView" style="display: none;">
-            <h2>Past FYP Titles</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Author</th>
-                        <th>Title</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1. ERWIN HUDA ZULKEFLEEZ</td>
-                        <td>RELATED BUDGET 2024 DIAGRAM USING FACILE PACKING TECHNIQUE</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="abstract">
-                <strong>Abstract:</strong><br><br>
-                The project aims to achieve the issue of challenging presentation of Malaysia's budget data by proposing the packing diagram of budget visualization for better understanding spending distributions in the Malaysian Government's annual planning project. The present method involves a proper pack of effective budget data visualization that would serve to enhance the understandability of the system, thereby allowing impact of data visualization and to establish relationship between Government and public when showing impact of data in specific events. The project is designed to tackle multiple issues in the system, that would include data visualization, structure, functions and overall efficiency. The goal is to create a simple user interface that effectively displays structured data representations. The project is going to review and analyze different visualization studies, taking into consideration the Malaysia budget 2024 facile worksheet and diagram in a more diverse flow.
-            </div>
+            
+            <button class="view-profile-btn" onclick="hideDetail()">Back to List</button>
         </div>
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                if (query.includes('supervisor') || query === '') {
-                    window.location.href = 'supervisor_list.html';
-                } else if (query.includes('fyp') || query.includes('titles')) {
-                    window.location.href = 'past_fyp.html';
-                } else {
-                    // Show normal search results
-                    document.getElementById('searchResults').style.display = 'block';
-                    document.getElementById('chartsView').style.display = 'none';
-                    document.getElementById('supervisorListView').style.display = 'none';
-                    document.getElementById('pastFYPView').style.display = 'none';
-                    document.getElementById('abstractView').style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load all supervisors when page loads
+            fetchSupervisors();
+            
+            // Set up search functionality
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchSupervisors(query);
+                    } else {
+                        fetchSupervisors();
+                    }
                 }
-            }
+            });
         });
 
-        function showCharts() {
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('chartsView').style.display = 'block';
-            document.getElementById('supervisorListView').style.display = 'none';
-            document.getElementById('pastFYPView').style.display = 'none';
-            document.getElementById('abstractView').style.display = 'none';
+        // Fetch all supervisors from the API
+        function fetchSupervisors() {
+            fetch('/api/supervisors')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displaySupervisors(data.supervisors);
+                })
+                .catch(error => {
+                    console.error('Error fetching supervisors:', error);
+                    document.getElementById('supervisorsList').innerHTML = 
+                        `<div class="error-message">Failed to load supervisors. Please try again later.</div>`;
+                });
         }
 
-        function hideCharts() {
+        // Search supervisors using the AI search API
+        function searchSupervisors(query) {
+            document.getElementById('supervisorsList').innerHTML = '<div class="loading">Searching...</div>';
+            
+            fetch(`/api/search_supervisors?query=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.results && data.results.length > 0) {
+                        displaySearchResults(data.results);
+                    } else {
+                        document.getElementById('supervisorsList').innerHTML = 
+                            `<div class="error-message">No supervisors found matching "${query}"</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching supervisors:', error);
+                    document.getElementById('supervisorsList').innerHTML = 
+                        `<div class="error-message">Search failed. Please try again later.</div>`;
+                });
+        }
+
+        // Display search results
+        function displaySearchResults(results) {
+        const supervisorsContainer = document.getElementById('supervisorsList');
+        supervisorsContainer.innerHTML = '';
+    
+        const resultsHeader = document.createElement('div');
+        resultsHeader.className = 'supervisor-list-header';
+        resultsHeader.textContent = `Found ${results.length} matching supervisors`;
+        supervisorsContainer.appendChild(resultsHeader);
+    
+        results.forEach(result => {
+            // Create supervisor object in the format expected by createSupervisorCard
+            const supervisorData = {
+                SupervisorID: result.supervisor_id,
+                SvName: result.supervisor_name,
+                expertise_areas: result.expertise
+            };
+        
+                const supervisorCard = createSupervisorCard(supervisorData);
+                supervisorsContainer.appendChild(supervisorCard);
+            });
+        }
+
+        // Display all supervisors
+        function displaySupervisors(supervisors) {
+            const supervisorsContainer = document.getElementById('supervisorsList');
+            supervisorsContainer.innerHTML = '';
+            
+            if (supervisors.length === 0) {
+                supervisorsContainer.innerHTML = '<div class="error-message">No supervisors found</div>';
+                return;
+            }
+            
+            supervisors.forEach(supervisor => {
+                const supervisorCard = createSupervisorCard(supervisor);
+                supervisorsContainer.appendChild(supervisorCard);
+            });
+        }
+
+        // Create a supervisor card element
+        function createSupervisorCard(supervisor) {
+            const card = document.createElement('div');
+            card.className = 'supervisor-card';
+            
+            const image = document.createElement('img');
+            image.src = '/api/placeholder/60/60';
+            image.alt = 'Supervisor';
+            image.className = 'supervisor-image';
+            
+            const info = document.createElement('div');
+            info.className = 'supervisor-info';
+            
+            const name = document.createElement('div');
+            name.className = 'supervisor-name';
+            name.textContent = supervisor.SvName;
+            
+            const expertise = document.createElement('div');
+            expertise.className = 'supervisor-expertise';
+            expertise.textContent = supervisor.expertise_areas || 'No expertise listed';
+            
+            info.appendChild(name);
+            info.appendChild(expertise);
+            
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'view-profile-btn';
+            viewBtn.textContent = 'View Profile';
+            viewBtn.onclick = function() {
+                viewSupervisorDetail(supervisor.SupervisorID);
+            };
+            
+            card.appendChild(image);
+            card.appendChild(info);
+            card.appendChild(viewBtn);
+            
+            return card;
+        }
+
+        // View supervisor details
+        function viewSupervisorDetail(supervisorId) {
+            fetch(`/api/supervisor/${supervisorId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(supervisor => {
+                    displaySupervisorDetail(supervisor);
+                })
+                .catch(error => {
+                    console.error('Error fetching supervisor details:', error);
+                    alert('Failed to load supervisor details. Please try again later.');
+                });
+        }
+
+        // Display supervisor detail view
+        function displaySupervisorDetail(supervisor) {
+            const detailContainer = document.getElementById('supervisorDetail');
+            
+            // Create supervisor card for the detail view
+            const card = document.createElement('div');
+            card.className = 'supervisor-card';
+            
+            const image = document.createElement('img');
+            image.src = '/api/placeholder/60/60';
+            image.alt = 'Supervisor';
+            image.className = 'supervisor-image';
+            
+            const info = document.createElement('div');
+            info.className = 'supervisor-info';
+            
+            const name = document.createElement('div');
+            name.className = 'supervisor-name';
+            name.textContent = supervisor.SvName;
+            
+            const expertise = document.createElement('div');
+            expertise.className = 'supervisor-expertise';
+            expertise.textContent = supervisor.expertise_areas || 'No expertise listed';
+            
+            const emailTitle = document.createElement('div');
+            emailTitle.className = 'field-title';
+            emailTitle.textContent = 'Email:';
+            
+            const emailValue = document.createElement('div');
+            emailValue.className = 'field-value';
+            emailValue.textContent = supervisor.SvEmail || 'Not available';
+            
+            info.appendChild(name);
+            info.appendChild(expertise);
+            info.appendChild(emailTitle);
+            info.appendChild(emailValue);
+            
+            card.appendChild(image);
+            card.appendChild(info);
+            
+            detailContainer.innerHTML = '';
+            detailContainer.appendChild(card);
+            
+            // Hide the list view and show the detail view
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('supervisorDetailView').style.display = 'block';
+        }
+
+        // Hide supervisor detail view and return to list
+        function hideDetail() {
+            document.getElementById('supervisorDetailView').style.display = 'none';
             document.getElementById('searchResults').style.display = 'block';
-            document.getElementById('chartsView').style.display = 'none';
-        }
-
-        function showSupervisorList() {
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('chartsView').style.display = 'none';
-            document.getElementById('supervisorListView').style.display = 'block';
-            document.getElementById('pastFYPView').style.display = 'none';
-            document.getElementById('abstractView').style.display = 'none';
-        }
-
-        function showPastFYP() {
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('chartsView').style.display = 'none';
-            document.getElementById('supervisorListView').style.display = 'none';
-            document.getElementById('pastFYPView').style.display = 'block';
-            document.getElementById('abstractView').style.display = 'none';
-        }
-
-        function showAbstract() {
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('chartsView').style.display = 'none';
-            document.getElementById('supervisorListView').style.display = 'none';
-            document.getElementById('pastFYPView').style.display = 'none';
-            document.getElementById('abstractView').style.display = 'block';
         }
     </script>
 </body>

@@ -61,16 +61,6 @@
             background-color: #f5f5f5;
             cursor: pointer;
         }
-        .abstract {
-            background-color: white;
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 14px;
-            line-height: 1.5;
-            display: none;
-        }
         .search-container {
             margin-bottom: 20px;
             position: relative;
@@ -91,94 +81,164 @@
         .search-input {
             padding-left: 35px !important;
         }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        /* Modal Popup Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
         <div class="nav-links">
-            <a href="homepage.html">Home</a>
-            <a href="profiles.html">Profiles</a>
-            <a href="index.html">Logout</a>
+            <a href="/homepage">Home</a>
+            <a href="/profiles.html">Profiles</a>
+            <a href="/logout">Logout</a>
         </div>
     </div>
 
     <div class="container">
         <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
+            <input type="text" class="search-input" placeholder="Enter Author or title" id="searchInput">
         </div>
 
         <h2>Past FYP Titles</h2>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        
         <table>
             <thead>
                 <tr>
                     <th>Author</th>
                     <th>Title</th>
+                    <th>Year</th>
                 </tr>
             </thead>
             <tbody>
-                <tr onclick="toggleAbstract()">
-                    <td>1. NURUL YUSOF HAZINA</td>
-                    <td>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</td>
+                {% for project in projects %}
+                <tr onclick="showAbstract('{{ project.ProjectID }}', '{{ project.Title }}', '{{ project.Author }}', '{{ project.Year }}', '{{ project.Abstract|replace('\'', '\\\'') }}')">
+                    <td>{{ project.Author }}</td>
+                    <td>{{ project.Title }}</td>
+                    <td>{{ project.Year }}</td>
                 </tr>
-                <tr>
-                    <td>2. NADIA IBRAHIM</td>
-                    <td>3D SCAN TUMOR IMAGE RECOGNITION USING CANN</td>
-                </tr>
-                <tr>
-                    <td>3. JAMALUL AKBAR KEVIN</td>
-                    <td>SPECIES RECOMMENDATION SYSTEM USING IMAGE RECOGNITION</td>
-                </tr>
-                <tr>
-                    <td>4. THARIP ABDULLAH</td>
-                    <td>PLANT DISEASE DIAGNOSIS ASSISTANT</td>
-                </tr>
-                <tr>
-                    <td>5. NURUL RUBAIYAH RIDZUAN</td>
-                    <td>DISABILITY TREATMENT CENTER MANAGEMENT SYSTEM</td>
-                </tr>
-                <tr>
-                    <td>6. JENNIFER COOPER</td>
-                    <td>ELECTRIC VEHICLE CHARGING STATION MANAGEMENT</td>
-                </tr>
-                <tr>
-                    <td>7. NABILAH HASMADY</td>
-                    <td>IMAGE RECOGNITION IN SKIN DISEASES</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
-
-        <div id="abstractSection" class="abstract">
-            <h3>SMART INVENTORY MANAGEMENT SYSTEM IR VISUALIZATION</h3>
-            <p><strong>Author:</strong> NURUL YUSOF HAZINA</p>
+    </div>
+    
+    <!-- Modal Popup for Abstract -->
+    <div id="abstractModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle"></h3>
+            <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
+            <p><strong>Year:</strong> <span id="modalYear"></span></p>
             <p><strong>Abstract:</strong></p>
-            <p>This project focuses on developing a smart inventory management system with integrated visualization capabilities. The system leverages infrared (IR) technology to track inventory levels in real-time, enabling businesses to monitor stock levels efficiently. The visualization component provides intuitive graphical representations of inventory data, helping management make informed decisions about restocking, identifying slow-moving items, and optimizing warehouse space. The system includes features such as automated alerts for low stock, predictive analytics for demand forecasting, and customizable reporting tools. Implementation results show significant improvements in inventory accuracy and reduced operational costs for the test organizations.</p>
+            <p id="modalAbstract"></p>
         </div>
     </div>
 
     <script>
-        function toggleAbstract() {
-            const abstract = document.getElementById('abstractSection');
-            if (abstract.style.display === 'none' || abstract.style.display === '') {
-                abstract.style.display = 'block';
-            } else {
-                abstract.style.display = 'none';
+        const modal = document.getElementById('abstractModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalAuthor = document.getElementById('modalAuthor');
+        const modalYear = document.getElementById('modalYear');
+        const modalAbstract = document.getElementById('modalAbstract');
+        
+        function showAbstract(projectId, title, author, year, abstract) {
+            modalTitle.textContent = title;
+            modalAuthor.textContent = author;
+            modalYear.textContent = year;
+            modalAbstract.textContent = abstract;
+            modal.style.display = 'block';
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
             }
         }
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
 
         const searchInput = document.getElementById('searchInput');
         
         searchInput.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
-                const query = searchInput.value.toLowerCase();
-                if (query.includes('supervisor') || query === '') {
-                    window.location.href = 'supervisor_list.html';
-                } else if (query.includes('artificial') || query.includes('intelligence')) {
-                    window.location.href = 'search_results.html';
-                }
+                const searchText = searchInput.value.toLowerCase();
+                filterProjects(searchText);
             }
         });
+
+        function filterProjects(searchText) {
+            const rows = document.querySelectorAll('tbody tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const title = row.cells[1].textContent.toLowerCase();
+                const author = row.cells[0].textContent.toLowerCase();
+                
+                // Search in title and author only (abstracts are hidden)
+                if (searchText === '' || 
+                    title.includes(searchText) || 
+                    author.includes(searchText)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
     </script>
 </body>
 </html>

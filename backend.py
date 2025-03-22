@@ -174,6 +174,35 @@ def supervisor_list():
         return redirect(url_for('index'))
     return render_template('supervisor_list.html')
 
+@app.route('/profiles.html')
+def profiles():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('profiles.html')
+
+@app.route('/past_fyp.html')
+def past_fyp():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    
+    # Get FYP projects from database
+    conn, cursor = get_db_connection()
+    try:
+        cursor.execute("""
+            SELECT ProjectID, Title, Author, Abstract, Year 
+            FROM past_fyp
+            ORDER BY year DESC, Author
+        """)
+        
+        fyp_projects = cursor.fetchall()
+        return render_template('past_fyp.html', projects=fyp_projects)
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return render_template('past_fyp.html', error="Failed to load projects", projects=[])
+    finally:
+        cursor.close()
+        conn.close()
+
 # New route for handling supervisor search
 @app.route('/api/search_supervisors', methods=['GET'])
 def search_supervisors():
