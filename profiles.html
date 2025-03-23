@@ -381,20 +381,8 @@
 
         // View supervisor details
         function viewSupervisorDetail(supervisorId) {
-            fetch(`/api/supervisor/${supervisorId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(supervisor => {
-                    displaySupervisorDetail(supervisor);
-                })
-                .catch(error => {
-                    console.error('Error fetching supervisor details:', error);
-                    alert('Failed to load supervisor details. Please try again later.');
-                });
+            // Redirect to the supervisor_profile.html page with the supervisor ID
+            window.location.href = `/supervisor_profile.html?id=${supervisorId}`;
         }
 
         // Display supervisor detail view

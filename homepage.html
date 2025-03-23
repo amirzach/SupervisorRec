@@ -160,6 +160,114 @@
         .quick-links a:hover {
             color: #333;
         }
+        .search-trends {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-trends h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .trends-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .trend-column {
+            flex: 1;
+            margin-right: 15px;
+        }
+        .trend-column:last-child {
+            margin-right: 0;
+        }
+        .trend-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .trend-tags {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .trend-tag {
+            background-color: #f0ede2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .trend-tag:hover {
+            background-color: #e6e2d3;
+        }
+        /* New styles for profile views */
+        .profiles-section {
+            background-color: white;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profiles-section h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .profile-cards {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin: 0 -5px;
+        }
+        .profile-card {
+            min-width: 180px;
+            background-color: #f9f7f1;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 0 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .profile-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+        }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .profile-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .profile-expertise {
+            font-size: 12px;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            height: 32px;
+        }
+        .profile-views {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -176,6 +284,40 @@
         <div class="search-container">
             <span class="search-icon">🔍</span>
             <input type="text" class="search-input" placeholder="Enter research topic or interest (e.g. AI, Image processing)" id="searchInput">
+        </div>
+
+        <!-- New section: Most Viewed Profiles -->
+        <div class="profiles-section">
+            <h3>Most Viewed Profiles</h3>
+            <div class="profile-cards" id="mostViewedProfiles">
+                <!-- Profile cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- New section: Recently Viewed Profiles -->
+        <div class="profiles-section">
+            <h3>Recently Viewed Profiles</h3>
+            <div class="profile-cards" id="recentlyViewedProfiles">
+                <!-- Profile cards will be populated here -->
+            </div>
+        </div>
+
+        <div class="search-trends">
+            <h3>Search Trends</h3>
+            <div class="trends-container">
+                <div class="trend-column">
+                    <div class="trend-title">Recently Searched</div>
+                    <div class="trend-tags" id="recentSearches">
+                        <!-- Recent searches will be populated here -->
+                    </div>
+                </div>
+                <div class="trend-column">
+                    <div class="trend-title">Most Searched</div>
+                    <div class="trend-tags" id="mostSearched">
+                        <!-- Most searched items will be populated here -->
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="quick-links">
@@ -229,6 +371,244 @@
         const supervisorCardContainer = document.getElementById('supervisorCardContainer');
         const loadingIndicator = document.getElementById('loadingIndicator');
         const noResults = document.getElementById('noResults');
+        const recentSearchesContainer = document.getElementById('recentSearches');
+        const mostSearchedContainer = document.getElementById('mostSearched');
+        const mostViewedProfilesContainer = document.getElementById('mostViewedProfiles');
+        const recentlyViewedProfilesContainer = document.getElementById('recentlyViewedProfiles');
+        
+        // Local storage keys
+        const RECENT_SEARCHES_KEY = 'recentSearches';
+        const SEARCH_COUNTS_KEY = 'searchCounts';
+        const PROFILE_VIEWS_KEY = 'profileViews';
+        const RECENTLY_VIEWED_KEY = 'recentlyViewed';
+        
+        // Initialize from local storage or defaults
+        function initializeSearchData() {
+            let recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]');
+            let searchCounts = JSON.parse(localStorage.getItem(SEARCH_COUNTS_KEY) || '{}');
+            
+            // Populate sample data if empty
+            if (recentSearches.length === 0) {
+                recentSearches = ['Machine Learning', 'Image Processing', 'Data Mining'];
+                localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recentSearches));
+            }
+            
+            if (Object.keys(searchCounts).length === 0) {
+                searchCounts = {
+                    'Artificial Intelligence': 24,
+                    'Machine Learning': 19,
+                    'Computer Vision': 15,
+                    'Natural Language Processing': 12,
+                    'Deep Learning': 10
+                };
+                localStorage.setItem(SEARCH_COUNTS_KEY, JSON.stringify(searchCounts));
+            }
+            
+            displaySearchTrends(recentSearches, searchCounts);
+            initializeProfileViews();
+        }
+        
+        // Initialize profile views data
+        function initializeProfileViews() {
+            let profileViews = JSON.parse(localStorage.getItem(PROFILE_VIEWS_KEY) || '{}');
+            let recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+            
+            // Populate sample data if empty
+            if (Object.keys(profileViews).length === 0) {
+                profileViews = {
+                    '101': {
+                        supervisor_id: 101,
+                        supervisor_name: 'Dr. John Smith',
+                        expertise: 'Machine Learning, Neural Networks',
+                        views: 42
+                    },
+                    '102': {
+                        supervisor_id: 102,
+                        supervisor_name: 'Prof. Sarah Johnson',
+                        expertise: 'Computer Vision, Image Processing',
+                        views: 37
+                    },
+                    '103': {
+                        supervisor_id: 103,
+                        supervisor_name: 'Dr. David Lee',
+                        expertise: 'Natural Language Processing, Text Mining',
+                        views: 34
+                    },
+                    '104': {
+                        supervisor_id: 104,
+                        supervisor_name: 'Prof. Maria Garcia',
+                        expertise: 'Data Mining, Big Data Analytics',
+                        views: 30
+                    },
+                    '105': {
+                        supervisor_id: 105,
+                        supervisor_name: 'Dr. James Wilson',
+                        expertise: 'Cybersecurity, Network Analysis',
+                        views: 28
+                    }
+                };
+                localStorage.setItem(PROFILE_VIEWS_KEY, JSON.stringify(profileViews));
+            }
+            
+            if (recentlyViewed.length === 0) {
+                recentlyViewed = [
+                    {
+                        supervisor_id: 103,
+                        supervisor_name: 'Dr. David Lee',
+                        expertise: 'Natural Language Processing, Text Mining',
+                        timestamp: Date.now() - 3600000
+                    },
+                    {
+                        supervisor_id: 101,
+                        supervisor_name: 'Dr. John Smith',
+                        expertise: 'Machine Learning, Neural Networks',
+                        timestamp: Date.now() - 7200000
+                    },
+                    {
+                        supervisor_id: 105,
+                        supervisor_name: 'Dr. James Wilson',
+                        expertise: 'Cybersecurity, Network Analysis',
+                        timestamp: Date.now() - 86400000
+                    },
+                    {
+                        supervisor_id: 102,
+                        supervisor_name: 'Prof. Sarah Johnson',
+                        expertise: 'Computer Vision, Image Processing',
+                        timestamp: Date.now() - 172800000
+                    }
+                ];
+                localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
+            }
+            
+            displayProfileViews(profileViews, recentlyViewed);
+        }
+        
+        // Display profile views
+        function displayProfileViews(profileViews, recentlyViewed) {
+            // Clear containers
+            mostViewedProfilesContainer.innerHTML = '';
+            recentlyViewedProfilesContainer.innerHTML = '';
+            
+            // Sort by view count and display most viewed profiles
+            const sortedProfiles = Object.values(profileViews)
+                .sort((a, b) => b.views - a.views)
+                .slice(0, 5);
+                
+            sortedProfiles.forEach(profile => {
+                const card = createProfileCard(profile, profile.views + ' views');
+                mostViewedProfilesContainer.appendChild(card);
+            });
+            
+            // Sort by timestamp and display recently viewed profiles
+            const sortedRecent = recentlyViewed
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 5);
+                
+            sortedRecent.forEach(profile => {
+                const timeAgo = getTimeAgo(profile.timestamp);
+                const card = createProfileCard(profile, timeAgo);
+                recentlyViewedProfilesContainer.appendChild(card);
+            });
+        }
+        
+        // Create a profile card element
+        function createProfileCard(profile, subtitle) {
+            const card = document.createElement('div');
+            card.className = 'profile-card';
+            card.innerHTML = `
+                <img src="/api/placeholder/50/50" alt="Supervisor" class="profile-img">
+                <div class="profile-name">${profile.supervisor_name}</div>
+                <div class="profile-expertise">${profile.expertise}</div>
+                <div class="profile-views">${subtitle}</div>
+            `;
+            
+            card.addEventListener('click', function() {
+                viewSupervisorProfile(profile.supervisor_id);
+            });
+            
+            return card;
+        }
+        
+        // Get time ago string
+        function getTimeAgo(timestamp) {
+            const seconds = Math.floor((Date.now() - timestamp) / 1000);
+            
+            let interval = Math.floor(seconds / 86400);
+            if (interval > 1) return interval + ' days ago';
+            if (interval === 1) return 'yesterday';
+            
+            interval = Math.floor(seconds / 3600);
+            if (interval > 1) return interval + ' hours ago';
+            if (interval === 1) return '1 hour ago';
+            
+            interval = Math.floor(seconds / 60);
+            if (interval > 1) return interval + ' minutes ago';
+            if (interval === 1) return '1 minute ago';
+            
+            return 'just now';
+        }
+        
+        // Display recent and most searched terms
+        function displaySearchTrends(recentSearches, searchCounts) {
+            // Clear containers
+            recentSearchesContainer.innerHTML = '';
+            mostSearchedContainer.innerHTML = '';
+            
+            // Display recent searches (most recent first, limit to 5)
+            recentSearches.slice(0, 5).forEach(term => {
+                const tag = createSearchTag(term);
+                recentSearchesContainer.appendChild(tag);
+            });
+            
+            // Sort search counts and display top 5
+            const sortedSearches = Object.entries(searchCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+                
+            sortedSearches.forEach(([term, count]) => {
+                const tag = createSearchTag(term);
+                mostSearchedContainer.appendChild(tag);
+            });
+        }
+        
+        // Create a search tag element
+        function createSearchTag(term) {
+            const tag = document.createElement('div');
+            tag.className = 'trend-tag';
+            tag.textContent = term;
+            tag.addEventListener('click', function() {
+                searchInput.value = term;
+                searchSupervisors(term);
+                updateSearchHistory(term);
+            });
+            return tag;
+        }
+        
+        // Update search history when a new search is performed
+        function updateSearchHistory(query) {
+            // Update recent searches
+            let recentSearches = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]');
+            
+            // Remove if already exists
+            recentSearches = recentSearches.filter(term => term !== query);
+            
+            // Add to beginning of array
+            recentSearches.unshift(query);
+            
+            // Keep only most recent 10
+            recentSearches = recentSearches.slice(0, 10);
+            
+            // Update local storage
+            localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recentSearches));
+            
+            // Update search counts
+            let searchCounts = JSON.parse(localStorage.getItem(SEARCH_COUNTS_KEY) || '{}');
+            searchCounts[query] = (searchCounts[query] || 0) + 1;
+            localStorage.setItem(SEARCH_COUNTS_KEY, JSON.stringify(searchCounts));
+            
+            // Refresh display
+            displaySearchTrends(recentSearches, searchCounts);
+        }
         
         // Function to create a supervisor card element
         function createSupervisorCard(supervisor) {
@@ -254,8 +634,71 @@
         
         // Function to view a specific supervisor's profile
         function viewSupervisorProfile(supervisorId) {
+            // Update profile view count
+            updateProfileViews(supervisorId);
+            
             // Redirect to the supervisor profile page with the ID as a parameter
             window.location.href = `supervisor_profile.html?id=${supervisorId}`;
+        }
+        
+        // Update profile views when a profile is viewed
+        function updateProfileViews(supervisorId) {
+            // Get current profile views data
+            let profileViews = JSON.parse(localStorage.getItem(PROFILE_VIEWS_KEY) || '{}');
+            let recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+            
+            // Fetch supervisor details from API if not already in profileViews
+            if (!profileViews[supervisorId]) {
+                // This would normally be an API call, but we'll use dummy data for now
+                fetch(`/api/supervisor/${supervisorId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const supervisor = {
+                            supervisor_id: data.SupervisorID,
+                            supervisor_name: data.SvName,
+                            expertise: data.expertise_areas,
+                            views: 1
+                        };
+                        
+                        profileViews[supervisorId] = supervisor;
+                        localStorage.setItem(PROFILE_VIEWS_KEY, JSON.stringify(profileViews));
+                        
+                        // Add to recently viewed
+                        addToRecentlyViewed(supervisor);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching supervisor details:', error);
+                    });
+            } else {
+                // Increment view count for existing profile
+                profileViews[supervisorId].views += 1;
+                localStorage.setItem(PROFILE_VIEWS_KEY, JSON.stringify(profileViews));
+                
+                // Add to recently viewed
+                addToRecentlyViewed(profileViews[supervisorId]);
+            }
+        }
+        
+        // Add a supervisor to recently viewed list
+        function addToRecentlyViewed(supervisor) {
+            let recentlyViewed = JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+            
+            // Remove if already exists
+            recentlyViewed = recentlyViewed.filter(item => item.supervisor_id !== supervisor.supervisor_id);
+            
+            // Add to beginning of array with current timestamp
+            recentlyViewed.unshift({
+                supervisor_id: supervisor.supervisor_id,
+                supervisor_name: supervisor.supervisor_name,
+                expertise: supervisor.expertise,
+                timestamp: Date.now()
+            });
+            
+            // Keep only most recent 10
+            recentlyViewed = recentlyViewed.slice(0, 10);
+            
+            // Update local storage
+            localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(recentlyViewed));
         }
         
         // Function to search for supervisors using the API
@@ -317,6 +760,9 @@
                     
                     // Perform search
                     searchSupervisors(query);
+                    
+                    // Update search history
+                    updateSearchHistory(query);
                 }
             }
         });
@@ -325,6 +771,11 @@
             document.getElementById('searchResults').style.display = 'block';
             document.getElementById('chartsView').style.display = 'none';
         }
+        
+        // Initialize search data and trends on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSearchData();
+        });
     </script>
 </body>
 </html>
