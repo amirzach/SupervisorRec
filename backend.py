@@ -35,6 +35,17 @@ def initialize_db():
         StdEmail VARCHAR(100) UNIQUE NOT NULL
     )
     ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS supervisor_views (
+        StudentID INT(11) NOT NULL,
+        SupervisorID INT(11) NOT NULL,
+        view_count INT DEFAULT 1,
+        last_viewed DATETIME,
+        PRIMARY KEY (StudentID, SupervisorID),
+        FOREIGN KEY (StudentID) REFERENCES student(StudentID),
+        FOREIGN KEY (SupervisorID) REFERENCES supervisor(SupervisorID)
+    )
+    ''')    
     conn.commit()
     cursor.close()
     conn.close()
@@ -144,6 +155,17 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
 
+# Add route to serve supervisor profile pictures
+@app.route('/sv_pictures/<filename>')
+def supervisor_picture(filename):
+    # Check if the requested file exists in SV PICTURE folder
+    picture_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'SV PICTURE')
+    if os.path.exists(os.path.join(picture_path, filename)):
+        return send_from_directory(picture_path, filename)
+    else:
+        # Return default picture if requested picture doesn't exist
+        return send_from_directory(picture_path, 'default.jpg')
+
 @app.route('/api/supervisors', methods=['GET'])
 def get_all_supervisors():
     if 'username' not in session:
@@ -168,19 +190,20 @@ def get_all_supervisors():
         cursor.close()
         conn.close()
 
-# Add this new route to backend.py
-
 @app.route('/supervisor_profile.html')
 def supervisor_profile():
     if 'username' not in session:
         return redirect(url_for('index'))
     return render_template('supervisor_profile.html')
 
-# Update the existing API route to include more details
 @app.route('/api/supervisor/<int:supervisor_id>', methods=['GET'])
 def get_supervisor(supervisor_id):
     if 'username' not in session:
         return jsonify({"error": "Unauthorized"}), 401
+    
+    # Log this view
+    if 'user_id' in session:
+        log_supervisor_view(session['user_id'], supervisor_id)    
         
     conn, cursor = get_db_connection()
     try:
@@ -240,7 +263,6 @@ def past_fyp():
         cursor.close()
         conn.close()
 
-# New route for handling supervisor search
 @app.route('/api/search_supervisors', methods=['GET'])
 def search_supervisors():
     if 'username' not in session:
@@ -258,5 +280,130 @@ def search_supervisors():
         print(f"Search error: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/student_profile', methods=['GET'])
+def get_student_profile():
+    if 'username' not in session or 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    conn, cursor = get_db_connection()
+    try:
+        cursor.execute("SELECT StudentID, StdName, StdEmail FROM student WHERE StudentID = %s", 
+                     (session['user_id'],))
+        
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+            
+        return jsonify({
+            "id": user['StudentID'],
+            "name": user['StdName'],
+            "email": user['StdEmail']
+        })
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/student_email', methods=['GET'])
+def get_student_email():
+    if 'username' not in session or 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    student_id = request.args.get('id')
+    if not student_id or int(student_id) != session['user_id']:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    conn, cursor = get_db_connection()
+    try:
+        cursor.execute("SELECT StdEmail FROM student WHERE StudentID = %s", (student_id,))
+        
+        result = cursor.fetchone()
+        if not result:
+            return jsonify({"error": "User not found"}), 404
+            
+        return jsonify({"email": result['StdEmail']})
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+        
+def log_supervisor_view(student_id, supervisor_id):
+    conn, cursor = get_db_connection()
+    try:
+        # Check if view exists
+        cursor.execute("""
+            SELECT * FROM supervisor_views 
+            WHERE StudentID = %s AND SupervisorID = %s
+        """, (student_id, supervisor_id))
+        
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Update existing view count and timestamp
+            cursor.execute("""
+                UPDATE supervisor_views 
+                SET view_count = view_count + 1, last_viewed = NOW() 
+                WHERE StudentID = %s AND SupervisorID = %s
+            """, (student_id, supervisor_id))
+        else:
+            # Insert new view
+            cursor.execute("""
+                INSERT INTO supervisor_views (StudentID, SupervisorID, view_count, last_viewed)
+                VALUES (%s, %s, 1, NOW())
+            """, (student_id, supervisor_id))
+            
+        conn.commit()
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/student_supervisor_history', methods=['GET'])
+def get_supervisor_history():
+    if 'username' not in session or 'user_id' not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+            
+    conn, cursor = get_db_connection()
+    try:
+        # Get recently viewed supervisors
+        cursor.execute("""
+            SELECT sv.view_count, sv.last_viewed, s.SupervisorID, s.SvName 
+            FROM supervisor_views sv
+            JOIN supervisor s ON sv.SupervisorID = s.SupervisorID
+            WHERE sv.StudentID = %s
+            ORDER BY sv.last_viewed DESC
+            LIMIT 5
+        """, (session['user_id'],))
+            
+        recent = cursor.fetchall()
+            
+        # Get most viewed supervisors
+        cursor.execute("""
+            SELECT sv.view_count, sv.last_viewed, s.SupervisorID, s.SvName 
+            FROM supervisor_views sv
+            JOIN supervisor s ON sv.SupervisorID = s.SupervisorID
+            WHERE sv.StudentID = %s
+            ORDER BY sv.view_count DESC, sv.last_viewed DESC
+            LIMIT 5
+        """, (session['user_id'],))
+            
+        most_viewed = cursor.fetchall()
+            
+        return jsonify({
+            "recent": recent,
+            "most_viewed": most_viewed
+        })
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return jsonify({"error": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+    
 if __name__ == '__main__':
     app.run(debug=True)

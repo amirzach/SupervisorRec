@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervisor Recommender System</title>
+    <title>User Profile - Supervisor Recommender System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,146 +36,59 @@
             margin: 20px auto;
             padding: 0 20px;
         }
-        .search-container {
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .search-container input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .search-input {
-            padding-left: 35px !important;
-        }
-        .supervisor-list-header {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        .supervisor-card {
+        .profile-card {
             background-color: white;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profile-header {
             display: flex;
+            align-items: center;
+            margin-bottom: 20px;
         }
-        .supervisor-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 4px;
-            margin-right: 15px;
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #b8b19f;
+            margin-right: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            color: white;
         }
-        .supervisor-info {
+        .profile-title {
             flex: 1;
         }
-        .supervisor-name {
+        .profile-title h1 {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .profile-title p {
+            margin: 0;
+            color: #666;
+        }
+        .profile-section {
+            margin-bottom: 20px;
+        }
+        .profile-section h2 {
+            font-size: 18px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .profile-field {
+            margin-bottom: 10px;
+        }
+        .field-label {
             font-weight: bold;
             margin-bottom: 5px;
         }
-        .supervisor-expertise {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        .field-title {
-            font-size: 12px;
-            color: #999;
-            margin-bottom: 3px;
-        }
         .field-value {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        .view-profile-btn {
-            padding: 5px 10px;
-            background-color: #b8b19f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            align-self: flex-end;
-        }
-        .view-profile-btn:hover {
-            background-color: #a09c8b;
-        }
-        .charts-container {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        .chart {
-            background-color: white;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: calc(50% - 10px);
-            box-sizing: border-box;
-        }
-        .chart:first-child {
-            margin-right: 20px;
-        }
-        .chart-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .pie-chart {
-            width: 100%;
-            height: 200px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .line-chart {
-            width: 100%;
-            height: 200px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #b8b19f;
-            color: white;
-        }
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        .supervisor-list tr td:first-child {
-            width: 30px;
-        }
-        .abstract {
-            background-color: white;
-            border-radius: 4px;
-            padding: 15px;
-            margin: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 14px;
-            line-height: 1.5;
+            color: #333;
         }
         .loading {
             text-align: center;
@@ -183,14 +96,63 @@
             font-style: italic;
             color: #666;
         }
-        .search-results {
-            margin-top: 20px;
-        }
         .error-message {
             color: red;
             text-align: center;
             padding: 20px;
         }
+
+        /* Add to existing style section */
+        .history-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .history-column {
+            flex: 1;
+        }
+        
+        .history-column h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .history-list {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .history-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .view-count {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .empty-history {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 10px;
+        }        
     </style>
 </head>
 <body>
@@ -198,246 +160,180 @@
         <div class="logo">SUPERVISOR RECOMMENDER SYSTEM</div>
         <div class="nav-links">
             <a href="/homepage">Home</a>
-            <a href="/profiles.html">Profiles</a>
+            <a href="/profiles.html">My Profile</a>
             <a href="/logout">Logout</a>
         </div>
     </div>
 
     <div class="container">
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Enter keyword (e.g. AI, Image processing)" id="searchInput">
-        </div>
-
-        <div id="searchResults">
-            <div id="supervisorsList" class="supervisor-list-container">
-                <div class="loading">Loading supervisors...</div>
-            </div>
-        </div>
-
-        <div id="supervisorDetailView" style="display: none;">
-            <div id="supervisorDetail"></div>
-            
-            <div class="charts-container">
-                <div class="chart">
-                    <div class="chart-title">Area of expertise</div>
-                    <div class="pie-chart">
-                        <img src="/api/placeholder/300/200" alt="Pie Chart" style="max-width: 100%; max-height: 100%;">
-                    </div>
-                </div>
-                <div class="chart">
-                    <div class="chart-title">Number of students supervised</div>
-                    <div class="line-chart">
-                        <img src="/api/placeholder/300/200" alt="Line Chart" style="max-width: 100%; max-height: 100%;">
-                    </div>
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-icon" id="profileInitial">?</div>
+                <div class="profile-title">
+                    <h1 id="studentName">Loading...</h1>
+                    <p id="studentId">Student ID: Loading...</p>
                 </div>
             </div>
             
-            <button class="view-profile-btn" onclick="hideDetail()">Back to List</button>
+            <div class="profile-section">
+                <h2>Account Information</h2>
+                <div class="profile-field">
+                    <div class="field-label">Email</div>
+                    <div class="field-value" id="studentEmail">Loading...</div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h2>Supervisor History</h2>
+                
+                <div class="history-container">
+                    <div class="history-column">
+                        <h3>Recently Viewed</h3>
+                        <div id="recentlyViewed" class="history-list">
+                            <div class="loading">Loading...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-column">
+                        <h3>Most Viewed</h3>
+                        <div id="mostViewed" class="history-list">
+                            <div class="loading">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+            
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Load all supervisors when page loads
-            fetchSupervisors();
-            
-            // Set up search functionality
-            const searchInput = document.getElementById('searchInput');
-            
-            searchInput.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    const query = searchInput.value.trim();
-                    if (query) {
-                        searchSupervisors(query);
-                    } else {
-                        fetchSupervisors();
-                    }
-                }
-            });
+            // Fetch student profile data
+            fetchStudentProfile();
+            fetchSupervisorHistory();            
         });
 
-        // Fetch all supervisors from the API
-        function fetchSupervisors() {
-            fetch('/api/supervisors')
+        // Fetch student profile data
+        function fetchStudentProfile() {
+            // First check if there's student data in the session
+            const studentName = "{{ session.get('username', '') }}";
+            const studentId = "{{ session.get('user_id', '') }}";
+            
+            if (studentName && studentId) {
+                // If data is available directly from session, use it
+                updateProfileWithSessionData(studentName, studentId);
+            } else {
+                // Otherwise make an API call to get the data
+                fetch('/api/student_profile')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch profile data');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        displayStudentProfile(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching student profile:', error);
+                        document.getElementById('errorMessage').textContent = 
+                            'Failed to load profile data. Please try again later.';
+                        document.getElementById('errorMessage').style.display = 'block';
+                    });
+            }
+        }
+
+        // Update profile with session data and then fetch additional data
+        function updateProfileWithSessionData(name, id) {
+            // Update the visible fields with the data we have
+            document.getElementById('studentName').textContent = name;
+            document.getElementById('studentId').textContent = 'Student ID: ' + id;
+            
+            // Set profile initial
+            const initial = name.charAt(0).toUpperCase();
+            document.getElementById('profileInitial').textContent = initial;
+            
+            // Then fetch the rest of the data (email) from the database
+            fetch(`/api/student_email?id=${id}`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Failed to fetch email data');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    displaySupervisors(data.supervisors);
+                    document.getElementById('studentEmail').textContent = data.email || 'Not available';
                 })
                 .catch(error => {
-                    console.error('Error fetching supervisors:', error);
-                    document.getElementById('supervisorsList').innerHTML = 
-                        `<div class="error-message">Failed to load supervisors. Please try again later.</div>`;
+                    console.error('Error fetching student email:', error);
+                    document.getElementById('studentEmail').textContent = 'Email not available';
                 });
         }
 
-        // Search supervisors using the AI search API
-        function searchSupervisors(query) {
-            document.getElementById('supervisorsList').innerHTML = '<div class="loading">Searching...</div>';
+        // Display student profile data
+        function displayStudentProfile(data) {
+            document.getElementById('studentName').textContent = data.name;
+            document.getElementById('studentId').textContent = 'Student ID: ' + data.id;
+            document.getElementById('studentEmail').textContent = data.email;
             
-            fetch(`/api/search_supervisors?query=${encodeURIComponent(query)}`)
+            // Set profile initial
+            const initial = data.name.charAt(0).toUpperCase();
+            document.getElementById('profileInitial').textContent = initial;
+        }
+
+        function fetchSupervisorHistory() {
+            fetch('/api/student_supervisor_history')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Failed to fetch history data');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        displaySearchResults(data.results);
-                    } else {
-                        document.getElementById('supervisorsList').innerHTML = 
-                            `<div class="error-message">No supervisors found matching "${query}"</div>`;
-                    }
+                    displaySupervisorHistory(data);
                 })
                 .catch(error => {
-                    console.error('Error searching supervisors:', error);
-                    document.getElementById('supervisorsList').innerHTML = 
-                        `<div class="error-message">Search failed. Please try again later.</div>`;
+                    console.error('Error fetching supervisor history:', error);
+                    document.getElementById('recentlyViewed').innerHTML = 
+                        '<div class="empty-history">Failed to load history.</div>';
+                    document.getElementById('mostViewed').innerHTML = 
+                        '<div class="empty-history">Failed to load history.</div>';
                 });
         }
 
-        // Display search results
-        function displaySearchResults(results) {
-        const supervisorsContainer = document.getElementById('supervisorsList');
-        supervisorsContainer.innerHTML = '';
-    
-        const resultsHeader = document.createElement('div');
-        resultsHeader.className = 'supervisor-list-header';
-        resultsHeader.textContent = `Found ${results.length} matching supervisors`;
-        supervisorsContainer.appendChild(resultsHeader);
-    
-        results.forEach(result => {
-            // Create supervisor object in the format expected by createSupervisorCard
-            const supervisorData = {
-                SupervisorID: result.supervisor_id,
-                SvName: result.supervisor_name,
-                expertise_areas: result.expertise
-            };
-        
-                const supervisorCard = createSupervisorCard(supervisorData);
-                supervisorsContainer.appendChild(supervisorCard);
-            });
-        }
-
-        // Display all supervisors
-        function displaySupervisors(supervisors) {
-            const supervisorsContainer = document.getElementById('supervisorsList');
-            supervisorsContainer.innerHTML = '';
+        function displaySupervisorHistory(data) {
+            const recentContainer = document.getElementById('recentlyViewed');
+            const mostViewedContainer = document.getElementById('mostViewed');
             
-            if (supervisors.length === 0) {
-                supervisorsContainer.innerHTML = '<div class="error-message">No supervisors found</div>';
-                return;
+            // Display recently viewed
+            if (data.recent && data.recent.length > 0) {
+                recentContainer.innerHTML = data.recent.map(supervisor => `
+                    <div class="history-item" onclick="navigateToSupervisor(${supervisor.SupervisorID})">
+                        ${supervisor.SvName}
+                        <span class="view-count">${supervisor.view_count}</span>
+                    </div>
+                `).join('');
+            } else {
+                recentContainer.innerHTML = '<div class="empty-history">No recently viewed supervisors</div>';
             }
             
-            supervisors.forEach(supervisor => {
-                const supervisorCard = createSupervisorCard(supervisor);
-                supervisorsContainer.appendChild(supervisorCard);
-            });
+            // Display most viewed
+            if (data.most_viewed && data.most_viewed.length > 0) {
+                mostViewedContainer.innerHTML = data.most_viewed.map(supervisor => `
+                    <div class="history-item" onclick="navigateToSupervisor(${supervisor.SupervisorID})">
+                        ${supervisor.SvName}
+                        <span class="view-count">${supervisor.view_count}</span>
+                    </div>
+                `).join('');
+            } else {
+                mostViewedContainer.innerHTML = '<div class="empty-history">No supervisor viewing history</div>';
+            }
         }
 
-        // Create a supervisor card element
-        function createSupervisorCard(supervisor) {
-            const card = document.createElement('div');
-            card.className = 'supervisor-card';
-            
-            const image = document.createElement('img');
-            image.src = '/api/placeholder/60/60';
-            image.alt = 'Supervisor';
-            image.className = 'supervisor-image';
-            
-            const info = document.createElement('div');
-            info.className = 'supervisor-info';
-            
-            const name = document.createElement('div');
-            name.className = 'supervisor-name';
-            name.textContent = supervisor.SvName;
-            
-            const expertise = document.createElement('div');
-            expertise.className = 'supervisor-expertise';
-            expertise.textContent = supervisor.expertise_areas || 'No expertise listed';
-            
-            info.appendChild(name);
-            info.appendChild(expertise);
-            
-            const viewBtn = document.createElement('button');
-            viewBtn.className = 'view-profile-btn';
-            viewBtn.textContent = 'View Profile';
-            viewBtn.onclick = function() {
-                viewSupervisorDetail(supervisor.SupervisorID);
-            };
-            
-            card.appendChild(image);
-            card.appendChild(info);
-            card.appendChild(viewBtn);
-            
-            return card;
-        }
-
-        // View supervisor details
-        function viewSupervisorDetail(supervisorId) {
-            // Redirect to the supervisor_profile.html page with the supervisor ID
+        function navigateToSupervisor(supervisorId) {
             window.location.href = `/supervisor_profile.html?id=${supervisorId}`;
-        }
-
-        // Display supervisor detail view
-        function displaySupervisorDetail(supervisor) {
-            const detailContainer = document.getElementById('supervisorDetail');
-            
-            // Create supervisor card for the detail view
-            const card = document.createElement('div');
-            card.className = 'supervisor-card';
-            
-            const image = document.createElement('img');
-            image.src = '/api/placeholder/60/60';
-            image.alt = 'Supervisor';
-            image.className = 'supervisor-image';
-            
-            const info = document.createElement('div');
-            info.className = 'supervisor-info';
-            
-            const name = document.createElement('div');
-            name.className = 'supervisor-name';
-            name.textContent = supervisor.SvName;
-            
-            const expertise = document.createElement('div');
-            expertise.className = 'supervisor-expertise';
-            expertise.textContent = supervisor.expertise_areas || 'No expertise listed';
-            
-            const emailTitle = document.createElement('div');
-            emailTitle.className = 'field-title';
-            emailTitle.textContent = 'Email:';
-            
-            const emailValue = document.createElement('div');
-            emailValue.className = 'field-value';
-            emailValue.textContent = supervisor.SvEmail || 'Not available';
-            
-            info.appendChild(name);
-            info.appendChild(expertise);
-            info.appendChild(emailTitle);
-            info.appendChild(emailValue);
-            
-            card.appendChild(image);
-            card.appendChild(info);
-            
-            detailContainer.innerHTML = '';
-            detailContainer.appendChild(card);
-            
-            // Hide the list view and show the detail view
-            document.getElementById('searchResults').style.display = 'none';
-            document.getElementById('supervisorDetailView').style.display = 'block';
-        }
-
-        // Hide supervisor detail view and return to list
-        function hideDetail() {
-            document.getElementById('supervisorDetailView').style.display = 'none';
-            document.getElementById('searchResults').style.display = 'block';
-        }
+        }    
     </script>
 </body>
 </html>
